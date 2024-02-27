@@ -33,11 +33,19 @@ void CTimeMgr::update()
 	//이전 프레임 카운팅 값과 현재 프레임 카운팅값의 차이를 구한다.
 	m_dDT = (double)(m_llCurCount.QuadPart - m_llPrevCount.QuadPart) / (double)(m_llFrequency.QuadPart);
 
-	//= 1. / m_dDT;
-
 	//이전 카운트값을 현재값으로 갱신
 	m_llPrevCount = m_llCurCount;
 
+#ifdef _DEBUG 
+	if (m_dDT > (1. / 60.))
+	{
+		m_dDT = (1. / 60.);
+	}
+#endif
+}
+
+void CTimeMgr::render()
+{
 	++m_iCallCount;
 	m_dAcc += m_dDT;
 
@@ -49,7 +57,7 @@ void CTimeMgr::update()
 		m_iCallCount = 0;
 
 		wchar_t szBuffer[255] = {};
-		swprintf_s(szBuffer,L"FPS : %d, DT : %f", m_iFPS, m_dDT);
-		SetWindowText(CCore::GetInst()->GetMainHwnd(),szBuffer);
+		swprintf_s(szBuffer, L"FPS : %d, DT : %f", m_iFPS, m_dDT);
+		SetWindowText(CCore::GetInst()->GetMainHwnd(), szBuffer);
 	}
 }

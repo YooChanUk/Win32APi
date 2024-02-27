@@ -42,6 +42,7 @@
 //
 //};
 
+class CTexture;
 
 class CCore
 {
@@ -52,14 +53,33 @@ private:
 	POINT m_ptResolution;	//메인 윈도우 해상도
 	HDC m_hDC;				//메인윈도우에 Draw 할 DC
 
+	CTexture* m_pMemTex; //백버퍼 텍스처
+
+	//자주 사용하는 GDI Object
+	HBRUSH m_arrBrush[(UINT)BRUSH_TYPE::END];
+	HPEN m_arrPen[(UINT)PEN_TYPE::END];
+
+	//메뉴
+	HMENU m_hMenu; //Tool_Scene에서만 사용
+
 public:
 	int init(HWND _hWnd,POINT _ptResolution);
 	void progress();
 
 private:
-	void update();
-	void render();
+	void Clear();
+	void CreateBrushPen();
+
+public:
+	void DockMenu();
+	void DivideMenu();
+	void ChangeWindowSize(Vec2 _vResolution, bool _bMenu);
 
 public:
 	HWND GetMainHwnd() { return m_hWnd; }
+	POINT GetResolution() { return m_ptResolution; }
+	HDC GetMainHDC() { return m_hDC; }
+	HBRUSH GetBrush(BRUSH_TYPE _eType) { return m_arrBrush[(UINT)_eType]; }
+	HPEN GetPen(PEN_TYPE _eType) { return m_arrPen[(UINT)_eType]; }
+	//HMENU GetMenu() { return m_hMenu; }
 };

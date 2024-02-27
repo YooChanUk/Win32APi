@@ -1,7 +1,7 @@
 // Win32ApiStudy.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
-#include "pch.h"
+#include "global.h"
 #include "framework.h"
 #include "Win32ApiStudy.h"
 #include "CCore.h"
@@ -26,6 +26,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, //실행될 프로세스의 시작 주소
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
+    //메모리 릭(누수)체크
+
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtSetBreakAlloc(215);
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -117,7 +122,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WIN32APISTUDY));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_WIN32APISTUDY);
+    wcex.lpszMenuName = nullptr;//MAKEINTRESOURCEW(IDC_WIN32APISTUDY);
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -163,6 +168,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
+INT_PTR CALLBACK TileCountProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -175,6 +182,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case ID_MENU_TILE:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_TILE_COUNT), hWnd, TileCountProc);
             break;
         case IDM_EXIT:
             DestroyWindow(hWnd);
